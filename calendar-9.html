@@ -1,0 +1,564 @@
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8">
+    <link rel="stylesheet" href="css/fullcalendar.min.css" media="all" />
+    <link rel="stylesheet" href="css/style.css" media="all" />
+    <script src="jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="js/moment.min.js"></script>
+    <script type="text/javascript" src="js/fullcalendar.min.js"></script>
+    <script type="text/javascript" src="lang/ja.js"></script>
+</head>
+
+<body>
+    <div id='calendar'></div>
+    <!--    <div id="situmon"></div>-->
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <!--<script src="https://www.gstatic.com/firebasejs/6.1.1/firebase-app.js"></script>-->
+    <!-- Firebase App is always required and must be first -->
+    <script src="https://www.gstatic.com/firebasejs/5.9.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.9.1/firebase-database.js"></script>
+
+    <script type="text/javascript">
+        $(function() {
+            var test = null;
+            var test1 = null;
+            // Your web app's Firebase configuration
+            var firebaseConfig = {
+                apiKey: "AIzaSyD90UD8WBumZcvHmOvxjlpWyKcGXQ95PoU",
+                authDomain: "calendar-a3e17.firebaseapp.com",
+                databaseURL: "https://calendar-a3e17.firebaseio.com",
+                projectId: "calendar-a3e17",
+                storageBucket: "calendar-a3e17.appspot.com",
+                messagingSenderId: "910102250720",
+                //appId: "1:910102250720:web:150022b7de909773"
+            };
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+            console.log(firebase);
+            var database = firebase.database();
+            //let room = $("#output").val();
+            $('#sousin').click(function() {
+                var input = document.getElementById('output');
+                $('#output').attr('value', input.value);
+                console.log(input.value);
+                let room = $("#output").val();
+                var json_obj = room;
+                var y_m = json_obj.substring(0, 7);
+                var d = json_obj.substring(8);
+                console.log(y_m);
+            });
+
+            $("#touroku").on("click", function() {
+                let room = $("#output").val();
+                var json_obj = room;
+                var y_m = json_obj.substring(0, 7);
+                var d = json_obj.substring(8);
+                console.log(y_m);
+                console.log(d);
+                location.reload();
+
+                var str1 = $('input:radio[name="q1"]:checked').val();
+                console.log(str1);
+                var str2 = $('input:radio[name="q2"]:checked').val();
+                console.log(str2);
+                var str3 = $('input:radio[name="q3"]:checked').val();
+                console.log(str3);
+                var str4 = $('input:radio[name="q4"]:checked').val();
+                console.log(str4);
+                var str5 = $('input:radio[name="q5"]:checked').val();
+                console.log(str5);
+                var str6 = $('input:radio[name="q6"]:checked').val();
+                console.log(str6);
+                var str7 = $('input:radio[name="q7"]:checked').val();
+                console.log(str7);
+                var str8 = $('input:radio[name="q8"]:checked').val();
+                console.log(str8);
+                var str9 = $('input:radio[name="q9"]:checked').val();
+                console.log(str9);
+                var str10 = $('input:radio[name="q10"]:checked').val();
+                console.log(str10);
+
+                var taiju = $('input[id="taiju"]').val();
+                console.log(taiju);
+
+                database.ref(y_m + '/' + d).set({
+                    q1: str1,
+                    q2: str2,
+                    q3: str3,
+                    q4: str4,
+                    q5: str5,
+                    q6: str6,
+                    q7: str7,
+                    q8: str8,
+                    q9: str9,
+                    q10: str10,
+                    taiju: taiju
+                });
+            });
+
+
+            $(document).ready(function() {
+                var date = new Date();
+                var d = date.getDate();
+                var m = date.getMonth(); //一日ずれる
+                var y = date.getFullYear();
+                var mm = ('0' + String(m + 1)).substr(-2);
+                var dd = ('0' + String(d)).substr(-2);
+                var a = 0;
+                var y_m_1 = y + '-' + mm;
+                console.log(y_m_1);
+                console.log(y);
+                console.log(m + 1);
+                console.log(d);
+                console.log(mm);
+                console.log(dd);
+
+                database.ref(y_m_1).on('value', function(data) {
+                    let k = data.key;
+                    let v = data.val();
+                    console.log(v);
+
+                    $('#calendar').fullCalendar({
+                        header: {
+                            left: '',
+                            center: 'title',
+                            right: ''
+                        },
+
+                        selectLongPressDelay:0,
+                        
+                        events: '/events.json',
+                        selectable: true,
+                        selectHelper: true,
+                        select: function(data) {
+                            var ymd = moment(data).format('YYYY-MM-DD');
+                            console.log(ymd);
+                            $('#output').val(ymd);
+                        }
+                    });
+                    
+                    data.forEach(function(e) {
+                        var day = e.key;
+                        var day_str = ('0' + day.toString()).substr(-2);
+                        var data = e.val();
+                        var json = JSON.stringify(data);
+                        json = JSON.parse(json);
+
+                        if (json.q1 == 0) {
+                            var num_q1_0 = 0;
+                            var num_q1_1 = 0;
+                            var num_q1_2 = 0;
+                            var num_q1_3 = 0;
+                        }
+                        if (json.q1 == 1) {
+                            var num_q1_1 = 1;
+                            var num_q1_0 = 0;
+                            var num_q1_2 = 0;
+                            var num_q1_3 = 0;
+                        }
+                        if (json.q1 == 2) {
+                            var num_q1_2 = 2;
+                            var num_q1_0 = 0;
+                            var num_q1_1 = 0;
+                            var num_q1_3 = 0;
+                        }
+                        if (json.q1 == 3) {
+                            var num_q1_3 = 3;
+                            var num_q1_0 = 0;
+                            var num_q1_1 = 0;
+                            var num_q1_2 = 0;
+                        }
+
+                        if (json.q2 == 0) {
+                            var num_q2_0 = 0;
+                            var num_q2_1 = 0;
+                            var num_q2_2 = 0;
+                            var num_q2_3 = 0;
+                        }
+                        if (json.q2 == 1) {
+                            var num_q2_0 = 0;
+                            var num_q2_1 = 1;
+                            var num_q2_2 = 0;
+                            var num_q2_3 = 0;
+                        }
+                        if (json.q2 == 2) {
+                            var num_q2_0 = 0;
+                            var num_q2_1 = 0;
+                            var num_q2_2 = 2;
+                            var num_q2_3 = 0;
+                        }
+                        if (json.q2 == 3) {
+                            var num_q2_0 = 0;
+                            var num_q2_1 = 0;
+                            var num_q2_2 = 0;
+                            var num_q2_3 = 3;
+                        }
+
+                        if (json.q3 == 0) {
+                            var num_q3_0 = 0;
+                            var num_q3_1 = 0;
+                            var num_q3_2 = 0;
+                            var num_q3_3 = 0;
+                        }
+                        if (json.q3 == 1) {
+                            var num_q3_0 = 0;
+                            var num_q3_1 = 1;
+                            var num_q3_2 = 0;
+                            var num_q3_3 = 0;
+                        }
+                        if (json.q3 == 2) {
+                            var num_q3_0 = 0;
+                            var num_q3_1 = 0;
+                            var num_q3_2 = 2;
+                            var num_q3_3 = 0;
+                        }
+                        if (json.q3 == 3) {
+                            var num_q3_0 = 0;
+                            var num_q3_1 = 0;
+                            var num_q3_2 = 0;
+                            var num_q3_3 = 3;
+                        }
+
+                        if (json.q4 == 0) {
+                            var num_q4_0 = 0;
+                            var num_q4_1 = 0;
+                            var num_q4_2 = 0;
+                            var num_q4_3 = 0;
+                        }
+                        if (json.q4 == 1) {
+                            var num_q4_0 = 0;
+                            var num_q4_1 = 1;
+                            var num_q4_2 = 0;
+                            var num_q4_3 = 0;
+                        }
+                        if (json.q4 == 2) {
+                            var num_q4_0 = 0;
+                            var num_q4_1 = 0;
+                            var num_q4_2 = 2;
+                            var num_q4_3 = 0;
+                        }
+                        if (json.q4 == 3) {
+                            var num_q4_0 = 0;
+                            var num_q4_1 = 0;
+                            var num_q4_2 = 0;
+                            var num_q4_3 = 3;
+                        }
+
+                        if (json.q5 == 0) {
+                            var num_q5_0 = 0;
+                            var num_q5_1 = 0;
+                            var num_q5_2 = 0;
+                            var num_q5_3 = 0;
+                        }
+                        if (json.q5 == 1) {
+                            var num_q5_0 = 0;
+                            var num_q5_1 = 1;
+                            var num_q5_2 = 0;
+                            var num_q5_3 = 0;
+                        }
+                        if (json.q5 == 2) {
+                            var num_q5_0 = 0;
+                            var num_q5_1 = 0;
+                            var num_q5_2 = 2;
+                            var num_q5_3 = 0;
+                        }
+                        if (json.q5 == 3) {
+                            var num_q5_0 = 0;
+                            var num_q5_1 = 0;
+                            var num_q5_2 = 0;
+                            var num_q5_3 = 3;
+                        }
+
+                        if (json.q6 == 0) {
+                            var num_q6_0 = 0;
+                            var num_q6_1 = 0;
+                            var num_q6_2 = 0;
+                            var num_q6_3 = 0;
+                        }
+                        if (json.q6 == 1) {
+                            var num_q6_0 = 0;
+                            var num_q6_1 = 1;
+                            var num_q6_2 = 0;
+                            var num_q6_3 = 0;
+                        }
+                        if (json.q6 == 2) {
+                            var num_q6_0 = 0;
+                            var num_q6_1 = 0;
+                            var num_q6_2 = 2;
+                            var num_q6_3 = 0;
+                        }
+                        if (json.q6 == 3) {
+                            var num_q6_0 = 0;
+                            var num_q6_1 = 0;
+                            var num_q6_2 = 0;
+                            var num_q6_3 = 3;
+                        }
+
+                        if (json.q7 == 0) {
+                            var num_q7_0 = 0;
+                            var num_q7_1 = 0;
+                            var num_q7_2 = 0;
+                            var num_q7_3 = 0;
+                        }
+                        if (json.q7 == 1) {
+                            var num_q7_0 = 0;
+                            var num_q7_1 = 1;
+                            var num_q7_2 = 0;
+                            var num_q7_3 = 0;
+                        }
+                        if (json.q7 == 2) {
+                            var num_q7_0 = 0;
+                            var num_q7_1 = 0;
+                            var num_q7_2 = 2;
+                            var num_q7_3 = 0;
+                        }
+                        if (json.q7 == 3) {
+                            var num_q7_0 = 0;
+                            var num_q7_1 = 0;
+                            var num_q7_2 = 0;
+                            var num_q7_3 = 3;
+                        }
+
+                        if (json.q8 == 0) {
+                            var num_q8_0 = 0;
+                            var num_q8_1 = 0;
+                            var num_q8_2 = 0;
+                            var num_q8_3 = 0;
+                        }
+                        if (json.q8 == 1) {
+                            var num_q8_0 = 0;
+                            var num_q8_1 = 1;
+                            var num_q8_2 = 0;
+                            var num_q8_3 = 0;
+                        }
+                        if (json.q8 == 2) {
+                            var num_q8_0 = 0;
+                            var num_q8_1 = 0;
+                            var num_q8_2 = 2;
+                            var num_q8_3 = 0;
+                        }
+                        if (json.q8 == 3) {
+                            var num_q8_0 = 0;
+                            var num_q8_1 = 0;
+                            var num_q8_2 = 0;
+                            var num_q8_3 = 3;
+                        }
+
+                        if (json.q9 == 0) {
+                            var num_q9_0 = 0;
+                            var num_q9_1 = 0;
+                            var num_q9_2 = 0;
+                            var num_q9_3 = 0;
+                        }
+                        if (json.q9 == 1) {
+                            var num_q9_0 = 0;
+                            var num_q9_1 = 1;
+                            var num_q9_2 = 0;
+                            var num_q9_3 = 0;
+                        }
+                        if (json.q9 == 2) {
+                            var num_q9_0 = 0;
+                            var num_q9_1 = 0;
+                            var num_q9_2 = 2;
+                            var num_q9_3 = 0;
+                        }
+                        if (json.q9 == 3) {
+                            var num_q9_0 = 0;
+                            var num_q9_1 = 0;
+                            var num_q9_2 = 0;
+                            var num_q9_3 = 3;
+                        }
+
+                        if (json.q10 == 0) {
+                            var num_q10_0 = 0;
+                            var num_q10_1 = 0;
+                            var num_q10_2 = 0;
+                            var num_q10_3 = 0;
+                        }
+                        if (json.q10 == 1) {
+                            var num_q10_0 = 0;
+                            var num_q10_1 = 1;
+                            var num_q10_2 = 0;
+                            var num_q10_3 = 0;
+                        }
+                        if (json.q10 == 2) {
+                            var num_q10_0 = 0;
+                            var num_q10_1 = 0;
+                            var num_q10_2 = 2;
+                            var num_q10_3 = 0;
+                        }
+                        if (json.q10 == 3) {
+                            var num_q10_0 = 0;
+                            var num_q10_1 = 0;
+                            var num_q10_2 = 0;
+                            var num_q10_3 = 3;
+                        }
+
+                        var syokuji = (num_q1_0 + num_q1_1 + num_q1_2 + num_q1_3 + num_q2_0 + num_q2_1 + num_q2_2 + num_q2_3 + num_q3_0 + num_q3_1 + num_q3_2 + num_q3_3 + num_q4_0 + num_q4_1 + num_q4_2 + num_q4_3 + num_q5_0 + num_q5_1 + num_q5_2 + num_q5_3) / 5;
+                        var undou = (num_q6_0 + num_q6_1 + num_q6_2 + num_q6_3 + num_q7_0 + num_q7_1 + num_q7_2 + num_q7_3 + num_q8_0 + num_q8_1 + num_q8_2 + num_q8_3) / 3;
+                        var joutai = (num_q9_0 + num_q9_1 + num_q9_2 + num_q9_3 + num_q10_0 + num_q10_1 + num_q10_2 + num_q10_3) / 2;
+
+                        if (syokuji == 0) {
+                            var maru_s = "〇〇〇";
+                        } else if (syokuji <= 1) {
+                            var maru_s = "●〇〇";
+                        } else if (syokuji <= 2) {
+                            var maru_s = "●●〇";
+                        } else if (syokuji <= 3) {
+                            var maru_s = "●●●";
+                        }
+
+                        if (undou == 0) {
+                            var maru_u = "〇〇〇";
+                        } else if (undou <= 1) {
+                            var maru_u = "●〇〇";
+                        } else if (undou <= 2) {
+                            var maru_u = "●●〇";
+                        } else if (undou <= 3) {
+                            var maru_u = "●●●";
+                        }
+
+                        if (joutai == 0) {
+                            var maru_j = "〇〇〇";
+                        } else if (joutai <= 1) {
+                            var maru_j = "●〇〇";
+                        } else if (joutai <= 2) {
+                            var maru_j = "●●〇";
+                        } else if (joutai <= 3) {
+                            var maru_j = "●●●";
+                        }
+
+                        console.log(day);
+                        console.log(data);
+                        console.log(syokuji);
+                        console.log(undou);
+                        console.log(joutai);
+                        //console.log(json.q1);
+                        var sel_date = y_m_1 + '-' + day_str;
+                        $('#' + sel_date).text()
+                        console.log($('#' + sel_date).append('<br>' + '<B>' + '<font color="red">' + '食:' + (maru_s) + '</font>' + '<br>' + '<font color="green">' + '運:' + (maru_u) + '</font>' + '<br>' + '<font color="blue">' + '状:' + (maru_j) + '</font>' + '<br>' + '<font>' + '体重:' + json.taiju + 'kg' + '</font>' + '</B>').text());
+                    });
+                });
+                //};
+            });
+        });
+
+    </script>
+    <div id="situmon">
+        <form action="?">
+            <p>日付を選択してから登録</p>
+            <input id="output" type="text" value="">
+
+        </form>
+        <div id="kekka"></div>
+
+        <div onclick="obj=document.getElementById('open').style; obj.display=(obj.display=='none')?'block':'none';">
+            <b><font size="4"><a style="cursor:pointer;"><font color="red">▼質問を展開</font></a></font></b>
+        </div>
+        <div id="open" style="display:none;clear:both;">
+
+        
+        <fieldset>
+            <legend>食事</legend>
+            <form name="syokuji">
+                <p>1.今日食べた量<br>
+                    <input type="radio" id="q1" name="q1" value="0"> 食べなかった
+                    <input type="radio" id="q1" name="q1" value="1"> 少し食べた
+                    <input type="radio" id="q1" name="q1" value="2"> 普通に食べた
+                    <input type="radio" id="q1" name="q1" value="3"> たくさん食べた
+                </p>
+
+                <p>2.甘いもの<br>
+                    <input type="radio" id="q2" name="q2" value="0"> 食べなかった
+                    <input type="radio" id="q2" name="q2" value="1"> 少し食べた
+                    <input type="radio" id="q2" name="q2" value="2"> 普通に食べた
+                    <input type="radio" id="q2" name="q2" value="3"> たくさん食べた
+                </p>
+
+                <p>3.油もの<br>
+                    <input type="radio" id="q3" name="q3" value="0"> 食べなかった
+                    <input type="radio" id="q3" name="q3" value="1"> 少し食べた
+                    <input type="radio" id="q3" name="q3" value="2"> 普通に食べた
+                    <input type="radio" id="q3" name="q3" value="3"> たくさん食べた
+                </p>
+
+                <p>4.外食<br>
+                    <input type="radio" id="q4" name="q4" value="0"> 食べなかった
+                    <input type="radio" id="q4" name="q4" value="1"> 少し食べた
+                    <input type="radio" id="q4" name="q4" value="2"> 普通に食べた
+                    <input type="radio" id="q4" name="q4" value="3"> たくさん食べた
+                </p>
+
+                <p>5.お酒<br>
+                    <input type="radio" id="q5" name="q5" value="0"> 飲まなかった
+                    <input type="radio" id="q5" name="q5" value="1"> 少し飲んだ
+                    <input type="radio" id="q5" name="q5" value="2"> 普通に飲んだ
+                    <input type="radio" id="q5" name="q5" value="3"> たくさん飲んだ
+                </p>
+            </form>
+        </fieldset>
+
+        <br>
+
+        <fieldset>
+            <legend>運動</legend>
+            <form name="undou">
+                <p>6.今日の運動<br>
+                    <input type="radio" id="q6" name="q6" value="0"> しなかった
+                    <input type="radio" id="q6" name="q6" value="1"> 少しした
+                    <input type="radio" id="q6" name="q6" value="2"> 普通にした
+                    <input type="radio" id="q6" name="q6" value="3"> たくさんした
+                </p>
+
+                <p>7.有酸素運動<br>
+                    <input type="radio" id="q7" name="q7" value="0"> しなかった
+                    <input type="radio" id="q7" name="q7" value="1"> 少しした
+                    <input type="radio" id="q7" name="q7" value="2"> 普通にした
+                    <input type="radio" id="q7" name="q7" value="3"> たくさんした
+                </p>
+
+                <p>8.筋トレ<br>
+                    <input type="radio" id="q8" name="q8" value="0"> しなかった
+                    <input type="radio" id="q8" name="q8" value="1"> 少しした
+                    <input type="radio" id="q8" name="q8" value="2"> 普通にした
+                    <input type="radio" id="q8" name="q8" value="3"> たくさんした
+                </p>
+            </form>
+        </fieldset>
+
+        <br>
+
+        <fieldset>
+            <legend>状態</legend>
+            <form name="joutai">
+                <p>9.睡眠<br>
+                    <input type="radio" id="q9" name="q9" value="0"> 寝なかった
+                    <input type="radio" id="q9" name="q9" value="1"> 少し寝た
+                    <input type="radio" id="q9" name="q9" value="2"> 普通に寝た
+                    <input type="radio" id="q9" name="q9" value="3"> たくさん寝た
+                </p>
+
+                <p>10.ストレス<br>
+                    <input type="radio" id="q10" name="q10" value="0"> ない
+                    <input type="radio" id="q10" name="q10" value="1"> 少しある
+                    <input type="radio" id="q10" name="q10" value="2"> 割とある
+                    <input type="radio" id="q10" name="q10" value="3"> かなりある
+                </p>
+            </form>
+        </fieldset>
+
+        <p>今日の体重<br>
+            <input type="text" id="taiju">kg</p>
+        <br>
+
+        <button id="touroku" onclick="touroku1">登録</button>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
